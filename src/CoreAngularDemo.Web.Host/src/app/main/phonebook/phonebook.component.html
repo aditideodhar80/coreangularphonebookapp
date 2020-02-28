@@ -1,0 +1,105 @@
+﻿<div [@routerTransition]>
+    <div class="m-subheader ">
+        <div class="d-flex align-items-center">
+            <div class="mr-auto col-sm-6">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    <span>{{"PhoneBook" | localize}}</span>
+                </h3>
+            </div>
+            <div class="col-sm-6 text-right">
+                <button class="btn btn-primary" (click)="createPersonModal.show()"><i class="fa fa-plus"></i> {{"CreateNewPerson" | localize}}</button>
+
+            </div>
+        </div>
+        <div class="m-content">
+            <div class="m-portlet m-portlet--mobile">
+                <div class="m-portlet__body">
+                    <h3>{{"AllPeople" | localize}}  ({{people.length}})</h3>
+
+
+                    <form autocomplete="off">
+                        <div class="m-form m-form--label-align-right">
+                            <div class="row align-items-center m--margin-bottom-10">
+                                <div class="col-xl-12">
+                                    <div class="form-group m-form__group align-items-center">
+                                        <div class="input-group">
+                                            <input [(ngModel)]="filter" name="filterText" autoFocus class="form-control m-input" [placeholder]="l('SearchWithThreeDot' | localize)" type="text">
+                                            <span class="input-group-btn">
+                                                <button (click)="getPeople()" class="btn btn-primary" type="submit"><i class="flaticon-search-1"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+
+                    <div class="m-widget1">
+                        <div class="m-widget1__item" *ngFor="let person of people" [ngClass]="{'bg-secondary m--padding-10': person===editingPerson}">
+                            <div class="row m-row--no-padding align-items-center">
+                                <div class="col">
+                                    <h3 class="m-widget1__title">{{person.name + ' ' + person.surname}}</h3>
+                                    <span class="m-widget1__desc">{{person.emailAddress}}</span>
+                                </div>
+                                <button (click)="editPerson(person)" title="{{'Edit' | localize}}" class="btn btn-outline-primary m-btn m-btn--icon m-btn--icon-only m-btn--pill">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button *ngIf="'Pages.Tenant.PhoneBook.EditPerson' | permission" (click)="editPersonModal.show(person.id)" title="{{'EditPerson' | localize}}" class="btn btn-outline-success m-btn m-btn--icon m-btn--icon-only m-btn--pill">
+                                    <i class="fa fa-pencil">Edit</i>
+                                </button>
+                                <button id="deletePerson" (click)="deletePerson(person)" title="{{'Delete' | localize}}" class="btn btn-outline-danger m-btn m-btn--icon m-btn--icon-only m-btn--pill" href="javascript:;">
+                                    <i class="fa fa-times"></i>
+                                </button>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 m--margin-top-20" *ngIf="person===editingPerson">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:10%"></th>
+                                                <th style="width:15%">{{"Type" | localize}}</th>
+                                                <th style="width:75%">{{"PhoneNumber" | localize}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let phone of person.phones">
+                                                <td>
+                                                    <button *ngIf="'Pages.Tenant.PhoneBook.EditPerson' | permission" (click)="deletePhone(phone, person)" class="btn btn-outline-danger m-btn m-btn--icon m-btn--icon-only m-btn--pill">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                </td>
+                                                <td>{{getPhoneTypeAsString(phone.type)}}</td>
+                                                <td>{{phone.number}}</td>
+                                            </tr>
+                                            <tr *ngIf="'Pages.Tenant.PhoneBook.EditPerson' | permission">
+                                                <td>
+                                                    <button (click)="savePhone()" class="btn btn-sm btn-success">
+                                                        <i class="fa fa-floppy-o">Save</i>
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <select name="Type" [(ngModel)]="newPhone.type" class="form-control">
+                                                        <option value="0">{{"PhoneType_Mobile" | localize}}</option>
+                                                        <option value="1">{{"PhoneType_Home" | localize}}</option>
+                                                        <option value="2">{{"PhoneType_Business" | localize}}</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="text" name="number" [(ngModel)]="newPhone.number" class="form-control" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <createPersonModal #createPersonModal (modalSave)="getPeople()"></createPersonModal>
+        <editPersonModal #editPersonModal (modalSave)="getPeople()"></editPersonModal>
+     </div>
+ </div>
